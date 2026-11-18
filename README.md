@@ -7,7 +7,7 @@ Rank resumes against one job description and explain which skills and signals su
 
 ## Live demo
 
-Try the deployed application at [resume-screening-system.onrender.com](https://resume-screening-system.onrender.com).
+Try the deployed application at [resume-screening-system-ksjo.onrender.com](https://resume-screening-system-ksjo.onrender.com).
 
 ![Light result](docs/images/ui_result_light.png)
 ![Dark result](docs/images/ui_result_dark.png)
