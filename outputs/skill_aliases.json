@@ -1,0 +1,206 @@
+{
+  "python": [],
+  "sql": [
+    "mysql",
+    "postgresql",
+    "postgres",
+    "sql server",
+    "t sql"
+  ],
+  "power bi": [
+    "powerbi"
+  ],
+  "tableau": [],
+  "excel": [
+    "microsoft excel",
+    "ms excel"
+  ],
+  "machine learning": [
+    "ml"
+  ],
+  "deep learning": [],
+  "nlp": [
+    "natural language processing"
+  ],
+  "statistics": [
+    "statistical analysis"
+  ],
+  "data analysis": [
+    "data analytics"
+  ],
+  "data visualization": [
+    "data visualisation",
+    "dashboard",
+    "dashboards"
+  ],
+  "etl": [],
+  "data warehouse": [
+    "data warehousing"
+  ],
+  "pandas": [],
+  "numpy": [],
+  "scikit learn": [
+    "sklearn"
+  ],
+  "tensorflow": [],
+  "pytorch": [],
+  "java": [],
+  "javascript": [
+    "js"
+  ],
+  "html": [],
+  "css": [],
+  "react": [
+    "reactjs",
+    "react js"
+  ],
+  "node js": [
+    "nodejs"
+  ],
+  "c++": [],
+  "c#": [],
+  "git": [
+    "github",
+    "gitlab"
+  ],
+  "docker": [],
+  "kubernetes": [],
+  "linux": [],
+  "aws": [
+    "amazon web services"
+  ],
+  "azure": [],
+  "google cloud": [
+    "gcp"
+  ],
+  "rest api": [
+    "rest apis",
+    "restful api"
+  ],
+  "agile": [
+    "scrum"
+  ],
+  "software testing": [
+    "quality assurance",
+    "qa"
+  ],
+  "networking": [
+    "tcp ip"
+  ],
+  "cybersecurity": [
+    "information security"
+  ],
+  "technical support": [
+    "help desk",
+    "helpdesk"
+  ],
+  "recruitment": [
+    "recruiting",
+    "talent acquisition"
+  ],
+  "onboarding": [],
+  "employee relations": [],
+  "payroll": [],
+  "performance management": [],
+  "hris": [],
+  "training and development": [],
+  "financial reporting": [],
+  "financial analysis": [],
+  "financial modeling": [
+    "financial modelling"
+  ],
+  "budgeting": [
+    "budgets"
+  ],
+  "forecasting": [],
+  "accounts payable": [],
+  "accounts receivable": [],
+  "reconciliation": [],
+  "auditing": [
+    "audit"
+  ],
+  "quickbooks": [],
+  "tax": [
+    "taxation"
+  ],
+  "risk management": [],
+  "sap": [],
+  "gaap": [],
+  "ifrs": [],
+  "loan processing": [
+    "underwriting"
+  ],
+  "anti money laundering": [
+    "aml"
+  ],
+  "customer service": [],
+  "lead generation": [],
+  "cold calling": [],
+  "crm": [
+    "salesforce"
+  ],
+  "negotiation": [],
+  "account management": [],
+  "business development": [],
+  "social media": [],
+  "seo": [
+    "search engine optimization"
+  ],
+  "content creation": [
+    "content marketing"
+  ],
+  "market research": [],
+  "email marketing": [],
+  "public relations": [],
+  "event planning": [],
+  "photoshop": [
+    "adobe photoshop"
+  ],
+  "illustrator": [
+    "adobe illustrator"
+  ],
+  "figma": [],
+  "ui design": [
+    "user interface"
+  ],
+  "ux design": [
+    "user experience"
+  ],
+  "graphic design": [],
+  "autocad": [],
+  "solidworks": [],
+  "matlab": [],
+  "plc": [],
+  "cad": [],
+  "project scheduling": [],
+  "quality control": [],
+  "lean manufacturing": [
+    "six sigma"
+  ],
+  "patient care": [],
+  "electronic health records": [
+    "ehr"
+  ],
+  "medical terminology": [],
+  "hipaa": [],
+  "cpr": [],
+  "lesson planning": [],
+  "classroom management": [],
+  "curriculum development": [
+    "curriculum"
+  ],
+  "special education": [],
+  "project management": [],
+  "communication": [
+    "communication skills"
+  ],
+  "leadership": [],
+  "problem solving": [],
+  "team management": [
+    "team leadership"
+  ],
+  "time management": [],
+  "microsoft office": [
+    "ms office"
+  ]
+}

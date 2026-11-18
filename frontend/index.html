@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Resume Screening System</title>
+  <style>
+    :root { color-scheme: light dark; --bg:#f4f6f8; --card:#fff; --text:#17202a; --muted:#607080; --accent:#1769aa; --danger:#b42318; }
+    @media (prefers-color-scheme: dark) { :root { --bg:#111820; --card:#1c2730; --text:#edf2f7; --muted:#a9b5c0; --accent:#70b7ee; --danger:#ff8f87; } }
+    [data-theme="light"] { color-scheme: light; }
+    [data-theme="dark"] { color-scheme: dark; }
+    * { box-sizing:border-box; } body { margin:0; background:var(--bg); color:var(--text); font:16px/1.5 system-ui,sans-serif; }
+    main { max-width:1100px; margin:auto; padding:24px 16px 48px; } header { display:flex; justify-content:space-between; gap:16px; align-items:center; }
+    h1 { margin:0 0 8px; } h2 { margin-top:0; } .card { background:var(--card); border-radius:14px; padding:20px; margin:16px 0; box-shadow:0 2px 12px #0002; }
+    textarea, input, button { font:inherit; } textarea, input[type="text"] { width:100%; padding:10px; border:1px solid #8795a1; border-radius:8px; background:transparent; color:inherit; }
+    textarea { min-height:150px; resize:vertical; } .counter { color:var(--muted); font-size:.85rem; text-align:right; }
+    button { border:0; border-radius:8px; padding:10px 14px; cursor:pointer; background:var(--accent); color:#fff; margin:4px 4px 4px 0; }
+    button.secondary { background:transparent; color:var(--text); border:1px solid #8795a1; } button:disabled { opacity:.55; cursor:wait; }
+    .drop { border:2px dashed #8795a1; border-radius:10px; padding:22px; text-align:center; } .drop.drag { border-color:var(--accent); }
+    .resume-box { border:1px solid #8795a1; border-radius:10px; padding:12px; margin-top:10px; }
+    .notice, .limitations { color:var(--muted); font-size:.92rem; } .error { color:var(--danger); white-space:pre-wrap; } .hidden { display:none; }
+    .result { border-left:5px solid var(--accent); } .score { font-size:1.35rem; font-weight:700; } .bar { background:#8795a155; border-radius:8px; height:12px; overflow:hidden; }
+    .bar span { display:block; height:100%; background:var(--accent); } .chips { display:flex; flex-wrap:wrap; gap:6px; }
+    .chip { border-radius:999px; padding:3px 9px; background:#1769aa22; font-size:.88rem; } .chip.missing { background:#b4231822; }
+    .row { display:flex; justify-content:space-between; gap:12px; align-items:center; } .actions { margin-top:12px; }
+    @media (max-width:650px) { header { align-items:flex-start; flex-direction:column; } .row { align-items:flex-start; flex-direction:column; } }
+  </style>
+</head>
+<body>
+<main>
+  <header><div><h1>Resume screening</h1><p>Rank candidates against one job description.</p></div><button id="theme" class="secondary">Toggle theme</button></header>
+  <p class="notice">Resumes are processed in memory and never stored.</p>
+  <section class="card">
+    <h2>Job description</h2>
+    <textarea id="job" aria-label="Job description"></textarea><div id="job-count" class="counter"></div>
+  </section>
+  <section class="card">
+    <div class="row"><h2>Resumes</h2><button id="example" class="secondary">Load example</button></div>
+    <div id="drop" class="drop">Drop PDF or TXT files here, or <button id="pick" type="button">choose files</button><input id="files" type="file" accept=".pdf,.txt" multiple hidden></div>
+    <div id="file-list" class="notice"></div>
+    <div id="pasted"></div><button id="add" class="secondary" type="button">Add pasted resume</button>
+    <div class="actions"><button id="rank">Rank candidates</button><span id="status" class="notice"></span></div>
+    <p class="limitations">Scores are relative to a reference pool of 2,481 resumes and the other uploads, not absolute ratings. Scanned PDFs without text are not supported. This must not be the sole basis for a hiring decision.</p>
+  </section>
+  <div id="error" class="error"></div><section id="skipped" class="card hidden"><h2>Skipped resumes</h2><ul></ul></section><section id="results"></section>
+</main>
+<script>
+const examples = {
+  job: `We are hiring a Data Analyst. Required: strong SQL and Python skills, experience building
+dashboards in Power BI, and solid knowledge of statistics. You will clean data, build reports
+and present insights to stakeholders. Preferred: machine learning, cloud experience on AWS,
+and familiarity with Git. Nice to have: Excel automation.`,
+  resumes: [
+    ["data_analyst", "JANE MWANGI Data Analyst Summary Data analyst with three years of experience. Built dashboards in Power BI, wrote SQL queries and used Python and pandas for statistics. Worked with Git and Excel. Cleaned data and presented insights to stakeholders."],
+    ["hr_officer", "PETER OMONDI HR Officer Summary Human resources professional focused on recruitment, onboarding and employee relations. Managed payroll and training and development programmes."],
+    ["accountant", "AMINA HASSAN Accountant Summary Accountant handling accounts payable, accounts receivable, reconciliation and financial reporting in QuickBooks. Supported tax filing and audit work."],
+    ["software_developer", "DAVID KAMAU Software Developer Summary Developer with Python, SQL, Docker and AWS experience. Built REST APIs, used Git daily and worked in agile teams. Some machine learning projects."]
+  ]
+};
+let limits = null, selectedFiles = [];
+const $ = id => document.getElementById(id);
+function counter(el, out) { out.textContent = limits ? `${el.value.length} / ${limits.max_jd_chars}` : `${el.value.length} characters`; }
+function addPasted(name="", text="") {
+  const box = document.createElement("div"); box.className = "resume-box";
+  box.innerHTML = `<input type="text" placeholder="Optional name" value="${name.replaceAll('"',"&quot;")}"><textarea placeholder="Paste resume text">${text}</textarea><div class="counter"></div><button type="button" class="secondary remove">Remove</button>`;
+  const area = box.querySelector("textarea"); const count = box.querySelector(".counter");
+  const update = () => count.textContent = limits ? `${area.value.length} / ${limits.max_resume_chars}` : `${area.value.length} characters`;
+  area.addEventListener("input", update); box.querySelector(".remove").onclick = () => box.remove(); update(); $("pasted").append(box);
+}
+async function loadLimits() {
+  try { const r = await fetch("/api/v1/model-info"); if (!r.ok) throw Error("Model information unavailable"); limits = (await r.json()).limits; counter($("job"), $("job-count")); }
+  catch (e) { $("error").textContent = e.message; }
+}
+function validate() {
+  const errors = [], l = limits, job = $("job").value.trim();
+  if (!l) return ["Model limits are not available yet."];
+  if (job.length < l.min_jd_chars || job.length > l.max_jd_chars) errors.push("Job description length is outside the allowed range.");
+  const boxes = [...document.querySelectorAll("#pasted .resume-box textarea")];
+  const total = selectedFiles.length + boxes.length;
+  if (!total || total > l.max_resumes) errors.push(`Provide between 1 and ${l.max_resumes} resumes.`);
+  boxes.forEach(a => { if (a.value.trim().length < l.min_resume_chars || a.value.trim().length > l.max_resume_chars) errors.push("A pasted resume length is outside the allowed range."); });
+  const totalBytes = selectedFiles.reduce((sum, f) => sum + f.size, 0);
+  if (totalBytes > l.max_total_upload_bytes) errors.push("The total upload size is too large.");
+  selectedFiles.forEach(f => {
+    if (![".pdf", ".txt"].includes(f.name.slice(f.name.lastIndexOf(".")).toLowerCase())) errors.push(`${f.name} has an unsupported type.`);
+    if (f.size > l.max_pdf_bytes) errors.push(`${f.name} is too large.`);
+  });
+  return errors;
+}
+async function rank() {
+  $("error").textContent = ""; const errors = validate(); if (errors.length) { $("error").textContent = errors.join("\n"); return; }
+  const data = new FormData(); data.append("job_description", $("job").value.trim());
+  selectedFiles.forEach(f => data.append("files", f));
+  document.querySelectorAll("#pasted .resume-box textarea").forEach(a => data.append("pasted_texts", a.value.trim()));
+  $("rank").disabled = true; $("status").textContent = "Ranking candidates. The first request can take a while.";
+  try { const r = await fetch("/api/v1/screen/files", {method:"POST", body:data}); const body = await r.json(); if (!r.ok) throw Error(body.detail || "Request failed"); render(body); }
+  catch (e) { $("error").textContent = e.message; } finally { $("rank").disabled = false; $("status").textContent = ""; }
+}
+function chips(items, missing=false) { return items.map(x => `<span class="chip${missing ? " missing" : ""}">${x}</span>`).join("") || "<span class=\"notice\">None</span>"; }
+function render(body) {
+  $("results").innerHTML = body.results.map(r => `<article class="card result"><div class="row"><h2>#${r.rank} ${r.name}</h2><span class="score">${r.score}/100</span></div><div class="bar"><span style="width:${r.score}%"></span></div><p>Skill match: ${r.skill_match_pct}% · Strongest signal: ${r.strongest_signal}</p><p><b>Matched</b></p><div class="chips">${chips(r.matched)}</div><p><b>Missing required</b></p><div class="chips">${chips(r.missing_required,true)}</div><p><b>Missing preferred</b></p><div class="chips">${chips(r.missing_preferred,true)}</div><p>${r.summary}</p></article>`).join("");
+  const list = $("skipped"), ul = list.querySelector("ul"); ul.innerHTML = (body.skipped || []).map(x => `<li>${x.name}: ${x.reason}</li>`).join(""); list.classList.toggle("hidden", !(body.skipped || []).length);
+}
+$("job").addEventListener("input", () => counter($("job"), $("job-count")));
+$("pick").onclick = () => $("files").click(); $("files").onchange = e => { selectedFiles = [...e.target.files]; $("file-list").textContent = selectedFiles.map(f => f.name).join(", "); };
+$("drop").ondragover = e => { e.preventDefault(); $("drop").classList.add("drag"); }; $("drop").ondragleave = () => $("drop").classList.remove("drag");
+$("drop").ondrop = e => { e.preventDefault(); $("drop").classList.remove("drag"); selectedFiles = [...e.dataTransfer.files]; $("file-list").textContent = selectedFiles.map(f => f.name).join(", "); };
+$("add").onclick = () => addPasted(); $("rank").onclick = rank;
+$("example").onclick = () => { $("job").value = examples.job; counter($("job"), $("job-count")); $("pasted").innerHTML = ""; examples.resumes.forEach(x => addPasted(...x)); selectedFiles = []; $("file-list").textContent = ""; };
+$("theme").onclick = () => { document.documentElement.dataset.theme = document.documentElement.dataset.theme === "dark" ? "light" : "dark"; };
+loadLimits();
+</script>
+</body>
+</html>

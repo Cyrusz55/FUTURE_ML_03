@@ -1,0 +1,38 @@
+{
+  "best_variant": "minilm full",
+  "embedding_model": "all-MiniLM-L6-v2",
+  "chunked": false,
+  "chunk_words": 150,
+  "weights": {
+    "bm25": 0.1,
+    "embedding": 0.8,
+    "skills": 0.1
+  },
+  "min_skill_weight": 0.1,
+  "required_weight": 1.0,
+  "preferred_weight": 0.5,
+  "excluded_categories": [
+    "ADVOCATE"
+  ],
+  "related_groups": [
+    [
+      "ACCOUNTANT",
+      "BANKING",
+      "FINANCE"
+    ],
+    [
+      "BUSINESS-DEVELOPMENT",
+      "SALES"
+    ],
+    [
+      "DIGITAL-MEDIA",
+      "PUBLIC-RELATIONS"
+    ],
+    [
+      "AUTOMOBILE",
+      "AVIATION",
+      "CONSTRUCTION",
+      "ENGINEERING"
+    ]
+  ]
+}

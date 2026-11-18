@@ -1,0 +1,10 @@
+.venv
+.env
+model/
+outputs/screening_bundle.npz
+outputs/emb_*.npy
+raw_data/
+__pycache__
+.pytest_cache
+.ruff_cache
+.ipynb_checkpoints
