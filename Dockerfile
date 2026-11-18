@@ -18,41 +18,22 @@ RUN grep -v '^torch==' /tmp/requirements.txt > /tmp/requirements-no-torch.txt &&
 COPY apps/ /app/apps/
 COPY machine_learning/ /app/machine_learning/
 COPY frontend/ /app/frontend/
-COPY model/ /app/model/
 COPY pyproject.toml /app/pyproject.toml
 
-RUN mkdir -p /app/model /home/app/.cache/huggingface && \
-    python - <<'PY'
-import json
-import numpy as np
-from huggingface_hub import hf_hub_download, snapshot_download
-from apps import model_loader
-from machine_learning import machine_learning
-
-bundle_path = hf_hub_download(
-    repo_id=model_loader.HF_REPO_ID,
-    filename=model_loader.HF_FILENAME,
-    revision=model_loader.HF_REVISION,
-    local_dir="/app/model",
-)
-with np.load(bundle_path, allow_pickle=False) as raw:
-    config = json.loads(str(raw["config_json"]))
-revision = config.get("embedding_model_revision")
-if not isinstance(revision, str) or not revision:
-    raise RuntimeError("Embedding model revision is missing")
-snapshot_download(
-    repo_id=config["embedding_model_id"],
-    revision=revision,
-)
-bundle = machine_learning.load_bundle(machine_learning.BUNDLE_PATH)
-embedder = machine_learning.get_embedder(bundle)
-embedder(["Made up screening smoke sentence"])
-PY
-
 RUN useradd --create-home --uid 10001 appuser && \
+    mkdir -p /app/model /home/app/.cache/huggingface && \
     chown -R appuser:appuser /app /home/app
 
 USER appuser
+
+RUN python - <<'PY'
+from apps.model_loader import get_bundle
+from machine_learning import machine_learning
+
+bundle = get_bundle()
+embedder = machine_learning.get_embedder(bundle)
+embedder(["Made up screening smoke sentence"])
+PY
 
 EXPOSE 8000
 
