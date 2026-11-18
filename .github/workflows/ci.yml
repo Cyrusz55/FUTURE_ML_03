@@ -26,6 +26,16 @@ jobs:
           python -m pip install --upgrade pip
           python -m pip install -r requirements.txt
           python -m pip install -r requirements_dev.txt
+      - name: Download screening bundle
+        run: |
+          python - <<'PY'
+          try:
+              from apps.model_loader import get_bundle
+
+              get_bundle()
+          except Exception as exc:
+              raise SystemExit(f"Unable to download the screening bundle: {exc}")
+          PY
       - name: Ruff
         run: ruff check .
       - name: Pytest
