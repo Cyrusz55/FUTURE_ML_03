@@ -1,0 +1,14 @@
+services:
+  resume-screening:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    # PORT=8000 controls both the uvicorn port and the host mapping below.
+    environment:
+      PORT: "8000"
+      CORS_ORIGINS: "http://localhost:8000"
+      HF_HOME: "/home/app/.cache/huggingface"
+    ports:
+      - "${PORT:-8000}:${PORT:-8000}"
+    # Convenience memory limit for Docker users.
+    mem_limit: 512m

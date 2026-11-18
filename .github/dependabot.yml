@@ -1,0 +1,22 @@
+version: 2
+updates:
+  - package-ecosystem: pip
+    directory: /
+    schedule:
+      interval: weekly
+    ignore:
+      # A bump can change scores against the parity fixture.
+      - dependency-name: torch
+      - dependency-name: sentence-transformers
+      - dependency-name: spacy
+      - dependency-name: numpy
+      - dependency-name: scipy
+      - dependency-name: scikit-learn
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+  - package-ecosystem: docker
+    directory: /
+    schedule:
+      interval: weekly

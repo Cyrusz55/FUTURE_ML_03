@@ -1,0 +1,16 @@
+.venv/
+.env
+.git/
+notebooks/
+outputs/
+docs/
+tests/
+scripts/
+__pycache__/
+.pytest_cache/
+.ruff_cache/
+*.npz
+*.npy
+raw_data/
+**/*.csv
+**/*.json
