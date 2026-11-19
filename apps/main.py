@@ -8,7 +8,7 @@ from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
 from pathlib import Path
 
-from fastapi import FastAPI
+from fastapi import FastAPI, Response
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
@@ -49,8 +49,13 @@ app.mount("/static", StaticFiles(directory=PROJECT_ROOT / "frontend"), name="sta
 app.include_router(router, prefix="/api/v1")
 
 
-@app.get("/", include_in_schema=False)
 @app.head("/", include_in_schema=False)
+def head_index() -> Response:
+    """Bare 200 for uptime probes — no disk read, no HTML body."""
+    return Response(status_code=200)
+
+
+@app.get("/", include_in_schema=False)
 def index() -> FileResponse:
     return FileResponse(PROJECT_ROOT / "frontend" / "index.html")
 
