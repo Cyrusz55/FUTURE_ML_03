@@ -114,6 +114,9 @@ def test_health_model_info_and_index(client: TestClient) -> None:
     assert {"max_resumes", "max_pdf_bytes", "max_total_upload_bytes"} <= body["limits"].keys()
     assert client.get("/").status_code == 200
     assert "Resume screening" in client.get("/").text
+    uptime_response = client.head("/")
+    assert uptime_response.status_code == 200
+    assert uptime_response.content == b""
 
 
 def test_json_parity(client: TestClient) -> None:
