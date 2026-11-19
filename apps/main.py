@@ -50,6 +50,7 @@ app.include_router(router, prefix="/api/v1")
 
 
 @app.get("/", include_in_schema=False)
+@app.head("/", include_in_schema=False)
 def index() -> FileResponse:
     return FileResponse(PROJECT_ROOT / "frontend" / "index.html")
 
