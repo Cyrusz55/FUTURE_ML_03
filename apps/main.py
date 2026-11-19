@@ -55,6 +55,3 @@ def index() -> FileResponse:
     return FileResponse(PROJECT_ROOT / "frontend" / "index.html")
 
 
-@app.head("/", include_in_schema=False)
-def uptime_check() -> Response:
-    return Response(status_code=200)
